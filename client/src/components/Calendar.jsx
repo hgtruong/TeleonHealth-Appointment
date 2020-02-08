@@ -5,7 +5,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 const localizer = momentLocalizer(moment);
 
-class App extends React.Component {
+class RBCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -97,4 +97,4 @@ class App extends React.Component {
   }
 }
 
-module.exports = Calendar;
+export { RBCalendar }
