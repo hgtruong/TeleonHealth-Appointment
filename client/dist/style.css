@@ -1,0 +1,12 @@
+.rbc-calendar {
+  min-height: 700px;
+  min-width: 500px;
+}
+
+.rbc-toolbar-label {
+  font-size: 35px;
+}
+
+button:focus {
+  outline: none;
+}
