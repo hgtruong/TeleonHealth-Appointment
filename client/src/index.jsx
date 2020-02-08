@@ -29,12 +29,24 @@ class App extends React.Component {
     this.setState({events: event});
   }
 
+  handleEventDoubleClick() {
+  }
+
+  handleSelectSlot({start,end,action}) {
+  }
+
+
   render() {
     return (
       <div className="calendar-container">
         <Calendar
           localizer={localizer}
           events={this.state.events}
+          defaultView="month"
+          views={["month"]}
+          selectable={true}
+          onDoubleClickEvent={this.handleEventDoubleClick}
+          onSelectSlot={this.handleSelectSlot}
          />
       </div>
     )
