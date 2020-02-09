@@ -1,5 +1,4 @@
 const path = require('path');
-
 const SRC_DIR = path.join(__dirname, 'client/src');
 const DIST_DIR = path.join(__dirname, 'client/dist');
 
@@ -24,6 +23,10 @@ module.exports = {
           'style-loader',
           'css-loader'
         ]
+      },
+      { 
+        test: /\.(png|woff|woff2|eot|ttf|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/, 
+        loader: 'url-loader?limit=100000' 
       }
     ]
   }
