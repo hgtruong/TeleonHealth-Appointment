@@ -153,6 +153,7 @@ checkInputFieldsFilled() {
               } }
               onDayClick={this.handleDayClick}
               selectedDays={this.state.selectedDay}
+              month={this.state.start}
             />
           </Form.Group>
           <Form.Group widths='2'>
