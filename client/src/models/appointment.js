@@ -1,14 +1,15 @@
-import Doctor from "./doctor.js";
+import { Doctor } from "./doctor.js";
 
 class Appointment {
   constructor(data) {
-    this.firstName = data.firstName;
-    this.lastName = data.lastName;
-    this.reasonForVisit = data.reasonForVisit;
-    this.start = new Date(data.start);
-    this.end = new Date(data.end);
-    this.title = new Date(data.title);
-    this.allDay = new Date(data.allDay);
+    data = data || {};
+    this.firstName = data.firstName ? data.firstName : "";
+    this.lastName = data.lastName ? data.lastName : "";
+    this.reasonForVisit = data.reasonForVisit ? data.reasonForVisit : "";;
+    this.start = new Date();
+    this.end = new Date();
+    this.allDay = false;
+    this.title = data.title ? data.title : "";
     this.doctor = new Doctor(data.doctor);
   }
 }
