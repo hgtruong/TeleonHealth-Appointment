@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { RBCalendar } from "./components/Calendar.jsx";
+import { AppointmentModal } from "./components/Modal.jsx";
+
+import 'semantic-ui-css/semantic.min.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +11,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <RBCalendar />
+      <AppointmentModal open={true} size={''}/>
     )
   }
 }
