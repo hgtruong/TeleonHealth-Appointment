@@ -15,7 +15,7 @@ class AppointmentModal extends React.Component {
 
     this.show = this.show.bind(this);
     this.close = this.close.bind(this);
-    this.handleEventDoubleClick = this.handleEventDoubleClick.bind(this);
+    this.handleAppointDoubleClick = this.handleAppointDoubleClick.bind(this);
     this.handleSlotClick = this.handleSlotClick.bind(this);
     this.updateNewAppointment = this.updateNewAppointment.bind(this);
   }
@@ -28,6 +28,10 @@ class AppointmentModal extends React.Component {
   setAppointments () {
     let testAppointments = [
       { 
+        id: 1,
+        firstName: "Huy",
+        lastName: "Truong",
+        reasonForVisit: "TEST",
         start: new Date('Febuary 7 2020'),
         end: new Date('Febuary 7 2020'),
         title: `Counseling with Dr. Howser`,
@@ -40,6 +44,7 @@ class AppointmentModal extends React.Component {
         }
       },
       {
+        id: 2,
         start: new Date('Febuary 20 2020'),
         end: new Date('Febuary 20 2020'),
         title: `Diagnosis with Dr. House`,
@@ -52,6 +57,7 @@ class AppointmentModal extends React.Component {
         }
       },
       {
+        id: 3,
         start: new Date('Febuary 3 2020'),
         end: new Date('Febuary 3 2020'),
         title: `Psychiatry with Dr. Crane`,
@@ -83,18 +89,20 @@ class AppointmentModal extends React.Component {
     this.setState({tempProp});
   }
 
-  handleEventDoubleClick(event) {
-    this.setState = {
-      
+  handleAppointDoubleClick(appointmentClicked) {
+    this.setState({appointment: appointmentClicked}, () => {
+      this.show('large');
+    });
 
-    }
   }
 
   updateNewAppointment(newAppointment) {
     delete newAppointment['cancel'];
     delete newAppointment['validDateSelected'];
     delete newAppointment['selectedDay'];
-    this.setState({appointments: [...this.state.appointments, newAppointment]});
+    newAppointment.id = this.state.appointments.length + 1;
+    this.setState({appointments: [...this.state.appointments, newAppointment]}, () => {
+    });
   }
 
   render() {
@@ -105,7 +113,7 @@ class AppointmentModal extends React.Component {
           <RBCalendar 
             handleSlotClick={this.handleSlotClick} 
             parentAppointments={this.state.appointments}
-            doubleClickHandler={this.handleEventDoubleClick}
+            doubleClickHandler={this.handleAppointDoubleClick}
           />
         </div>
 

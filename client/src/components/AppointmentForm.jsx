@@ -27,7 +27,8 @@ class AppointmentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: this.props.appointment.firstname ? this.props.appointment.firstname : "",
+      id: this.props.id,
+      firstName: this.props.appointment.firstName ? this.props.appointment.firstName : "",
       lastName: this.props.appointment.lastName ? this.props.appointment.lastName : "",
       reasonForVisit: this.props.appointment.reasonForVisit,
       start: this.props.appointment.start,
@@ -44,6 +45,10 @@ class AppointmentForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.checkInputFieldsFilled = this.checkInputFieldsFilled.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+  }
+
+  componentDidMount() {
+    console.log("component did mount state", this.state);
   }
 
   handleDayClick(day, modifiers = {}) {
@@ -94,7 +99,14 @@ checkInputFieldsFilled() {
 }
 
   handleCancel() {
-    this.setState({cancel: true}, () => {
+    this.setState({
+      cancel: true,
+      firstName: "",
+      lastName: "",
+      doctor: {},
+      reasonForVisit: "",
+      selectedDay: {}
+    }, () => {
       this.props.closeModal();
     });
   }
@@ -109,12 +121,14 @@ checkInputFieldsFilled() {
               label="First name"
               name="firstName"
               onChange={this.handleChange}
+              value={this.state.firstName}
               placeholder="First name"
             />
             <Form.Field
               control={Input}
               label="Last name"
               name="lastName"
+              value={this.state.lastName}
               onChange={this.handleChange}
               placeholder="Last name"
             />
@@ -125,6 +139,7 @@ checkInputFieldsFilled() {
               control={Select}
               label="Doctor"
               name="doctor"
+              value={`${this.state.doctor.firstName} ${this.state.doctor.lastName} ${this.state.doctor.occupation}`}
               options={options}
               onChange={this.handleChange}
               placeholder="Doctor"
@@ -143,6 +158,7 @@ checkInputFieldsFilled() {
                 control={TextArea}
                 label="Reason for visit:"
                 name="reasonForVisit"
+                value={this.state.reasonForVisit}
                 onChange={this.handleChange}
                 placeholder="Tell us what's bringing you in..."
               />
