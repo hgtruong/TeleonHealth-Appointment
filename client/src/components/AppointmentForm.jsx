@@ -10,11 +10,19 @@ import {
 import doctors from "../../../doctors";
 import DayPicker from "react-day-picker";
 import "react-day-picker/lib/style.css";
+import { Doctor } from "../models/doctor";
 
 const options = [];
+options.push(
+  {
+    key: `0`,
+    text: ``,
+    value: ``
+  }
+)
 for(let i =0; i < doctors.length; i++) {
   options.push({
-    key: `${i+1}`,
+    key: `${i+2}`,
     text: `Dr. ${doctors[i].firstName} ${doctors[i].lastName} (${doctors[i].occupation})`,
     value: `${doctors[i].firstName} ${doctors[i].lastName} ${doctors[i].occupation}`
   });
@@ -23,13 +31,15 @@ for(let i =0; i < doctors.length; i++) {
 const divStyle = {
   margin: '15px'
 }
+
 class AppointmentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      firstName: this.props.appointment.firstname ? this.props.appointment.firstname : "",
+      id: props.appointment.id,
+      firstName: this.props.appointment.firstName ? this.props.appointment.firstName : "",
       lastName: this.props.appointment.lastName ? this.props.appointment.lastName : "",
-      reasonForVisit: this.props.appointment.reasonForVisit,
+      reasonForVisit: this.props.appointment.reasonForVisit ? this.props.appointment.reasonForVisit : "",
       start: this.props.appointment.start,
       end: this.props.appointment.end,
       title: this.props.appointment.title,
@@ -50,7 +60,6 @@ class AppointmentForm extends React.Component {
     if(modifiers.disabled) {
       this.setState({validDateSelected: false});
       return;
-
     }
 
     this.setState({validDateSelected: true});
@@ -64,13 +73,17 @@ class AppointmentForm extends React.Component {
 
   handleChange(event, {name, value}) {
     if(name === "doctor") {
-      let doctorName = value.split(" ");
-      let foundDoctor = doctors.filter((currentDoctor) => {
-        return (currentDoctor.firstName === doctorName[0] &&
-                currentDoctor.lastName === doctorName[1]
-               )
-      });
-      this.setState({doctor: foundDoctor[0]});
+      if(value !== "") {
+        let doctorName = value.split(" ");
+        let foundDoctor = doctors.filter((currentDoctor) => {
+          return (currentDoctor.firstName === doctorName[0] &&
+                  currentDoctor.lastName === doctorName[1]
+                 )
+        });
+        this.setState({doctor: foundDoctor[0]});
+      } else {
+        this.setState({doctor: new Doctor()});
+      }
     } else {
       this.setState({[name]: value});
     }
@@ -80,9 +93,12 @@ class AppointmentForm extends React.Component {
   handleSubmit(event) {
     if(!this.state.cancel) {
       this.setState({title: `Dr. ${this.state.doctor.lastName} (${this.state.doctor.occupation})`}, () => {
-        this.props.updateNewAppointment(this.state);
-        this.props.closeModal();
-      })
+        if(!this.props.isExistingAppointment(this.state.id)) {
+          this.props.addNewAppointment(this.state);
+        } else {
+          this.props.updateAppointment(this.state);
+        }
+      });
     }
   }
 
@@ -94,9 +110,7 @@ checkInputFieldsFilled() {
 }
 
   handleCancel() {
-    this.setState({cancel: true}, () => {
-      this.props.closeModal();
-    });
+    this.props.closeModal();
   }
 
   render() {
@@ -109,12 +123,14 @@ checkInputFieldsFilled() {
               label="First name"
               name="firstName"
               onChange={this.handleChange}
+              value={this.state.firstName}
               placeholder="First name"
             />
             <Form.Field
               control={Input}
               label="Last name"
               name="lastName"
+              value={this.state.lastName}
               onChange={this.handleChange}
               placeholder="Last name"
             />
@@ -125,6 +141,7 @@ checkInputFieldsFilled() {
               control={Select}
               label="Doctor"
               name="doctor"
+              value={`${this.state.doctor.firstName} ${this.state.doctor.lastName} ${this.state.doctor.occupation}`}
               options={options}
               onChange={this.handleChange}
               placeholder="Doctor"
@@ -143,6 +160,7 @@ checkInputFieldsFilled() {
                 control={TextArea}
                 label="Reason for visit:"
                 name="reasonForVisit"
+                value={this.state.reasonForVisit}
                 onChange={this.handleChange}
                 placeholder="Tell us what's bringing you in..."
               />

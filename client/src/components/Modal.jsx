@@ -4,45 +4,60 @@ import { RBCalendar } from "./Calendar.jsx";
 import { AppointmentForm } from "./AppointmentForm.jsx"
 import { Appointment } from "../models/appointment.js";
 
+let id = 0;
 class AppointmentModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       appointments: [],
-      appointment: new Appointment()
+      appointment: new Appointment(),
     }
 
-    this.show = this.show.bind(this);
-    this.close = this.close.bind(this);
-    this.handleEventDoubleClick = this.handleEventDoubleClick.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.handleAppointDoubleClick = this.handleAppointDoubleClick.bind(this);
     this.handleSlotClick = this.handleSlotClick.bind(this);
-    this.updateNewAppointment = this.updateNewAppointment.bind(this);
-  }
+    this.addNewAppointment = this.addNewAppointment.bind(this);
+    this.isExistingAppointment = this.isExistingAppointment.bind(this);
+    this.updateAppointment = this.updateAppointment.bind(this);
+    this.idGenerator = this.idGenerator.bind(this);
 
+  }
 
   componentDidMount() {
     this.setAppointments();
   }
 
+  idGenerator() {
+    return ++id;
+  }
+
   setAppointments () {
     let testAppointments = [
       { 
+        id: this.idGenerator(),
+        firstName: "Huy",
+        lastName: "Truong",
+        reasonForVisit: "TEST",
         start: new Date('Febuary 7 2020'),
         end: new Date('Febuary 7 2020'),
-        title: `Counseling with Dr. Howser`,
+        title: `Dr. Howser (Psychologist)`,
         allDay: true,
         doctor: {  
           "firstName": "Doogie",
           "lastName": "Howser",
-          "occupation": "Psychologist",
+          "occupation": "Surgeon",
           "calendarColor": "GREEN"
         }
       },
       {
+        id: this.idGenerator(),
+        firstName: "Leslie",
+        lastName: "Knope",
         start: new Date('Febuary 20 2020'),
         end: new Date('Febuary 20 2020'),
-        title: `Diagnosis with Dr. House`,
+        title: `Dr. Howser (Diagnostic Medicine)`,
         allDay: true,
         doctor: {  
           "firstName": "Gregory",
@@ -52,9 +67,12 @@ class AppointmentModal extends React.Component {
         }
       },
       {
+        id: this.idGenerator(),
+        firstName: "Michael",
+        lastName: "Scott",
         start: new Date('Febuary 3 2020'),
         end: new Date('Febuary 3 2020'),
-        title: `Psychiatry with Dr. Crane`,
+        title: `Dr. Howser (Psychiatrist)`,
         allDay: true,
         doctor: {
           "firstName": "Frasier",
@@ -67,34 +85,58 @@ class AppointmentModal extends React.Component {
     this.setState({appointments: testAppointments});
   }
 
-  show(size) {
-    this.setState({ size, open: true })
+  showModal(size) {
+    this.setState({ size, open: true });
   }
 
-  close() {
-    this.setState({ open: false })
+  closeModal() {
+    this.setState({appointment: new Appointment()}, () => {
+      this.setState({ open: false });
+    });
   }
 
   handleSlotClick(clickedSlot) {
-    this.show('large');
+    this.showModal('large');
     let tempProp = {...this.state.appointment};
     tempProp.start = clickedSlot.start;
 
     this.setState({tempProp});
   }
 
-  handleEventDoubleClick(event) {
-    this.setState = {
-      
+  handleAppointDoubleClick(appointmentClicked) {
+    this.setState({appointment: appointmentClicked}, () => {
+      this.showModal('large');
+    });
 
-    }
   }
 
-  updateNewAppointment(newAppointment) {
+  addNewAppointment(newAppointment) {
     delete newAppointment['cancel'];
     delete newAppointment['validDateSelected'];
     delete newAppointment['selectedDay'];
-    this.setState({appointments: [...this.state.appointments, newAppointment]});
+    newAppointment.id = this.idGenerator();
+    this.setState({appointments: [...this.state.appointments, newAppointment]}, () => {
+      this.setState({appointment: new Appointment()});
+      this.closeModal();
+    });
+  }
+
+  isExistingAppointment(appointmentId) {
+    let tempFound = this.state.appointments.filter((currentAppointment) => {
+      return currentAppointment.id === appointmentId;
+    });
+    return tempFound.length === 1 ? true : false;
+  }
+
+  updateAppointment(updatedAppointment) {
+
+    this.setState({appointments: this.state.appointments.map(
+      currentAppointment => 
+      (currentAppointment.id === updatedAppointment.id ? Object.assign({}, updatedAppointment): currentAppointment))
+    }, () => {
+      this.setState({appointment: new Appointment()});
+      this.closeModal();
+    });
   }
 
   render() {
@@ -105,16 +147,18 @@ class AppointmentModal extends React.Component {
           <RBCalendar 
             handleSlotClick={this.handleSlotClick} 
             parentAppointments={this.state.appointments}
-            doubleClickHandler={this.handleEventDoubleClick}
+            doubleClickHandler={this.handleAppointDoubleClick}
           />
         </div>
 
         <div className="appointment-modal">
-          <Modal size={size} open={open} onClose={this.close} closeOnDimmerClick={false} closeIcon>
+          <Modal size={size} open={open} onClose={this.closeModal} closeOnDimmerClick={false} closeIcon>
             <AppointmentForm 
               appointment={this.state.appointment}  
-              closeModal={this.close}
-              updateNewAppointment={this.updateNewAppointment}
+              closeModal={this.closeModal}
+              addNewAppointment={this.addNewAppointment}
+              isExistingAppointment={this.isExistingAppointment}
+              updateAppointment={this.updateAppointment}
             />
           </Modal>
         </div>
