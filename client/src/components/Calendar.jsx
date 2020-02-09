@@ -25,7 +25,7 @@ const RBCalendar = function(props) {
     <div className="calendar-container" style={style}>
       <Calendar
         localizer={localizer}
-        events={props.parentEvents}
+        events={props.parentAppointments}
         defaultView="month"
         views={["month"]}
         selectable={true}
