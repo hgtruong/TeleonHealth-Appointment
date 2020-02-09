@@ -96,14 +96,16 @@ class AppointmentModal extends React.Component {
   }
 
   handleSlotClick(clickedSlot) {
-    this.showModal('large');
     let tempProp = {...this.state.appointment};
     tempProp.start = clickedSlot.start;
 
-    this.setState({tempProp});
+    this.setState({appointment: tempProp}, () => {
+      this.showModal('large');
+    });
   }
 
   handleAppointDoubleClick(appointmentClicked) {
+    console.log('appoint clicked', appointmentClicked.start);
     this.setState({appointment: appointmentClicked}, () => {
       this.showModal('large');
     });
