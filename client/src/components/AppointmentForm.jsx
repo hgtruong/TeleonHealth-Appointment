@@ -5,7 +5,8 @@ import {
   Select,
   TextArea,
   Button,
-  Message
+  Message,
+  Grid
 } from 'semantic-ui-react';
 import doctors from "../../../doctors";
 import DayPicker from "react-day-picker";
@@ -36,7 +37,7 @@ class AppointmentForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: props.appointment.id,
+      id: props.appointment.id ? this.props.appointment.id : null,
       firstName: this.props.appointment.firstName ? this.props.appointment.firstName : "",
       lastName: this.props.appointment.lastName ? this.props.appointment.lastName : "",
       reasonForVisit: this.props.appointment.reasonForVisit ? this.props.appointment.reasonForVisit : "",
@@ -54,6 +55,8 @@ class AppointmentForm extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.checkInputFieldsFilled = this.checkInputFieldsFilled.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.isEditing = this.isEditing.bind(this);
   }
 
   handleDayClick(day, modifiers = {}) {
@@ -101,6 +104,15 @@ class AppointmentForm extends React.Component {
       });
     }
   }
+
+handleDelete(event) {
+  console.log('inside handleDelete')
+  // this.props.deleteAppointment(this.state.id);
+}
+
+isEditing() {
+  return this.state.id !== null ? true : false;
+}
 
 checkInputFieldsFilled() {
   return this.state.firstName        !== "" &&
@@ -166,20 +178,44 @@ checkInputFieldsFilled() {
                 placeholder="Tell us what's bringing you in..."
               />
           </Form.Group>
-          <Message 
-            compact 
-            negative 
-            hidden={this.checkInputFieldsFilled()}> All fields and date need to be valid</Message>
+          <Form.Group>
+            <Form.Field width='8'>
+              <Message 
+                size="small" 
+                negative 
+                hidden={this.checkInputFieldsFilled()}
+                > All fields must be filled in and/or chosen to proceed 
+              </Message>
+            </Form.Field>
+          </Form.Group>
 
           <Form.Group>
-            <Button 
-              type="button" 
-              positive disabled={!this.checkInputFieldsFilled()} 
-              onClick={this.handleSubmit}>Schedule Appointment</Button>
+            <Form.Field width="13">
+                <Button 
+                  type="button" 
+                  positive
+                  floated="left"
+                  disabled={!this.checkInputFieldsFilled()} 
+                  onClick={this.handleSubmit}
+                >Schedule Appointment</Button>
 
-            <Button 
-              type="button" 
-              negative onClick={this.handleCancel}> Cancel </Button>
+                <Button 
+                  type="button" 
+                  floated="left"
+                  negative onClick={this.handleCancel}
+                > Cancel </Button>
+            </Form.Field>
+            <Form.Field>
+                <Button animated="fade"
+                    type="button"
+                    negative
+                    floated="right"
+                    disabled={!this.isEditing()}
+                >
+                  <Button.Content visible>  Delete Appointment </Button.Content>
+                  <Button.Content onClick={this.handleDelete} hidden> Click again to proceed </Button.Content>
+                </Button>
+            </Form.Field>
           </Form.Group>
         </Form>
       </div>  

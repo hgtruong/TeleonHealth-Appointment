@@ -22,7 +22,7 @@ class AppointmentModal extends React.Component {
     this.isExistingAppointment = this.isExistingAppointment.bind(this);
     this.updateAppointment = this.updateAppointment.bind(this);
     this.idGenerator = this.idGenerator.bind(this);
-
+    this.deleteAppointment = this.deleteAppointment.bind(this);
   }
 
   componentDidMount() {
@@ -141,6 +141,15 @@ class AppointmentModal extends React.Component {
     });
   }
 
+  deleteAppointment(deleteId) {
+    this.setState({appointments: this.state.appointments.filter((currentAppointment) => {
+      return currentAppointment.id != deleteId;
+    })}, () => {
+      console.log('new array with deleted', this.state.appointments);
+      this.closeModal();
+    });
+  }
+
   render() {
     const { open,size } = this.state;
     return (
@@ -161,6 +170,7 @@ class AppointmentModal extends React.Component {
               addNewAppointment={this.addNewAppointment}
               isExistingAppointment={this.isExistingAppointment}
               updateAppointment={this.updateAppointment}
+              deleteAppointment={this.deleteAppointment}
             />
           </Modal>
         </div>

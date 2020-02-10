@@ -1,5 +1,5 @@
 .rbc-calendar {
-  min-height: 1000px;
+  min-height: 800px;
   min-width: 500px;
 }
 
@@ -9,4 +9,9 @@
 
 button:focus {
   outline: none;
+}
+
+.info-guide {
+  margin: 5%;
+  font-size: 20px;
 }
