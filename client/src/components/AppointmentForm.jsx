@@ -6,7 +6,7 @@ import {
   TextArea,
   Button,
   Message,
-  Grid
+  Modal
 } from 'semantic-ui-react';
 import doctors from "../../../doctors";
 import DayPicker from "react-day-picker";
@@ -47,7 +47,8 @@ class AppointmentForm extends React.Component {
       doctor: this.props.appointment.doctor,
       selectedDay: this.props.appointment.start,
       cancel: false,
-      validDateSelected: this.props.appointment.start ? true : false
+      validDateSelected: this.props.appointment.start ? true : false,
+      deleteConfirmOpen: false
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -57,6 +58,9 @@ class AppointmentForm extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.isEditing = this.isEditing.bind(this);
+    this.showDeleteConfirmModal = this.showDeleteConfirmModal.bind(this);
+    this.closeDeleteConfirmModal = this.closeDeleteConfirmModal.bind(this);
+    this.openDeleteConfirmModal = this.openDeleteConfirmModal.bind(this);
   }
 
   handleDayClick(day, modifiers = {}) {
@@ -109,6 +113,18 @@ handleDelete(event) {
   this.props.deleteAppointment(this.state.id);
 }
 
+openDeleteConfirmModal() {
+  this.showDeleteConfirmModal("mini");
+}
+
+showDeleteConfirmModal(size) {
+  this.setState({ size, deleteConfirmOpen: true});
+}
+
+closeDeleteConfirmModal() {
+  this.setState({ deleteConfirmOpen: false });
+}
+
 isEditing() {
   return this.state.id !== null ? true : false;
 }
@@ -120,106 +136,132 @@ checkInputFieldsFilled() {
          this.state.validDateSelected
 }
 
-  handleCancel() {
-    this.props.closeModal();
-  }
+handleCancel() {
+  this.props.closeModal();
+}
 
   render() {
+    const {size, deleteConfirmOpen} = this.state;
+
     return (  
-      <div style={divStyle}>
-        <Form>
-          <Form.Group widths='equal'>
-            <Form.Field
-              control={Input}
-              label="First name"
-              name="firstName"
-              onChange={this.handleChange}
-              value={this.state.firstName}
-              placeholder="First name"
-            />
-            <Form.Field
-              control={Input}
-              label="Last name"
-              name="lastName"
-              value={this.state.lastName}
-              onChange={this.handleChange}
-              placeholder="Last name"
-            />
-          </Form.Group>
-          <Form.Group >
-            <Form.Field
-              width={8} 
-              control={Select}
-              label="Doctor"
-              name="doctor"
-              value={`${this.state.doctor.firstName} ${this.state.doctor.lastName} ${this.state.doctor.occupation}`}
-              options={options}
-              onChange={this.handleChange}
-              placeholder="Doctor"
-            />
-
-            <DayPicker
-              modifiers={ {
-                disabled: {daysOfWeek: [0,6]}
-              } }
-              onDayClick={this.handleDayClick}
-              selectedDays={this.state.selectedDay}
-              month={this.state.start}
-            />
-          </Form.Group>
-          <Form.Group widths='2'>
-            <Form.Field
-                control={TextArea}
-                label="Reason for visit:"
-                name="reasonForVisit"
-                value={this.state.reasonForVisit}
+      <div>
+        <div style={divStyle}>
+          <Form>
+            <Form.Group widths='equal'>
+              <Form.Field
+                control={Input}
+                label="First name"
+                name="firstName"
                 onChange={this.handleChange}
-                placeholder="Tell us what's bringing you in..."
+                value={this.state.firstName}
+                placeholder="First name"
               />
-          </Form.Group>
-          <Form.Group>
-            <Form.Field width='8'>
-              <Message 
-                size="small" 
+              <Form.Field
+                control={Input}
+                label="Last name"
+                name="lastName"
+                value={this.state.lastName}
+                onChange={this.handleChange}
+                placeholder="Last name"
+              />
+            </Form.Group>
+            <Form.Group >
+              <Form.Field
+                width={8} 
+                control={Select}
+                label="Doctor"
+                name="doctor"
+                value={`${this.state.doctor.firstName} ${this.state.doctor.lastName} ${this.state.doctor.occupation}`}
+                options={options}
+                onChange={this.handleChange}
+                placeholder="Doctor"
+              />
+
+              <DayPicker
+                modifiers={ {
+                  disabled: {daysOfWeek: [0,6]}
+                } }
+                onDayClick={this.handleDayClick}
+                selectedDays={this.state.selectedDay}
+                month={this.state.start}
+              />
+            </Form.Group>
+            <Form.Group widths='2'>
+              <Form.Field
+                  control={TextArea}
+                  label="Reason for visit:"
+                  name="reasonForVisit"
+                  value={this.state.reasonForVisit}
+                  onChange={this.handleChange}
+                  placeholder="Tell us what's bringing you in..."
+                />
+            </Form.Group>
+            <Form.Group>
+              <Form.Field width='8'>
+                <Message 
+                  size="small" 
+                  negative 
+                  hidden={this.checkInputFieldsFilled()}
+                  > All fields must be filled in and/or chosen to proceed 
+                </Message>
+              </Form.Field>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Field width="13">
+                  <Button 
+                    type="button" 
+                    positive
+                    floated="left"
+                    disabled={!this.checkInputFieldsFilled()} 
+                    onClick={this.handleSubmit}
+                  >Schedule Appointment</Button>
+
+                  <Button 
+                    type="button" 
+                    floated="left"
+                    negative onClick={this.handleCancel}
+                  > Cancel </Button>
+              </Form.Field>
+              <Form.Field>
+                  <Button 
+                    animated="fade"
+                    type="button"
+                    negative
+                    floated="right"
+                    disabled={!this.isEditing()}
+                  >
+                    <Button.Content visible>  Delete Appointment </Button.Content>
+                    <Button.Content onClick={this.openDeleteConfirmModal} hidden> Click to confirm delete </Button.Content>
+                  </Button>
+              </Form.Field>
+            </Form.Group>
+          </Form>
+        </div>
+        
+        <div className="delete-confirm-modal">
+          <Modal size={size} open={deleteConfirmOpen} onClose={this.closeDeleteConfirmModal} closeOnDimmerClick={false}>
+            <Modal.Header align="center">Canceling Appointment</Modal.Header>
+            <Modal.Content align="center">
+              <p>Are you sure you want to cancel this appointment?</p>
+            </Modal.Content>
+            <Modal.Actions>
+              <Button
+                type="button"
+                positive
+                onClick={this.handleDelete}
+              > Yes </Button>
+
+              <Button
+                type="button"
                 negative 
-                hidden={this.checkInputFieldsFilled()}
-                > All fields must be filled in and/or chosen to proceed 
-              </Message>
-            </Form.Field>
-          </Form.Group>
+                onClick={this.closeDeleteConfirmModal}
+              > No </Button>
 
-          <Form.Group>
-            <Form.Field width="13">
-                <Button 
-                  type="button" 
-                  positive
-                  floated="left"
-                  disabled={!this.checkInputFieldsFilled()} 
-                  onClick={this.handleSubmit}
-                >Schedule Appointment</Button>
-
-                <Button 
-                  type="button" 
-                  floated="left"
-                  negative onClick={this.handleCancel}
-                > Cancel </Button>
-            </Form.Field>
-            <Form.Field>
-                <Button 
-                  animated="fade"
-                  type="button"
-                  negative
-                  floated="right"
-                  disabled={!this.isEditing()}
-                >
-                  <Button.Content visible>  Delete Appointment </Button.Content>
-                  <Button.Content onClick={this.handleDelete} hidden> Click again to delete </Button.Content>
-                </Button>
-            </Form.Field>
-          </Form.Group>
-        </Form>
-      </div>  
-
+            </Modal.Actions>
+          </Modal>
+        </div>
+      </div>
     )
   }
 }

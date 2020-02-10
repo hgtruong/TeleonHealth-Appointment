@@ -1,4 +1,4 @@
-import { Button, Modal } from 'semantic-ui-react';
+import { Button, Modal, Icon } from 'semantic-ui-react';
 import React from "react";
 import { RBCalendar } from "./Calendar.jsx";
 import { AppointmentForm } from "./AppointmentForm.jsx"
@@ -10,8 +10,10 @@ class AppointmentModal extends React.Component {
     super(props);
     this.state = {
       open: false,
+      confirmModalOpen: false,
       appointments: [],
       appointment: new Appointment(),
+      actionCompleted: ""
     }
 
     this.showModal = this.showModal.bind(this);
@@ -23,6 +25,8 @@ class AppointmentModal extends React.Component {
     this.updateAppointment = this.updateAppointment.bind(this);
     this.idGenerator = this.idGenerator.bind(this);
     this.deleteAppointment = this.deleteAppointment.bind(this);
+    this.showConfirmModal = this.showConfirmModal.bind(this);
+    this.closeConfirmModal = this.closeConfirmModal.bind(this);
   }
 
   componentDidMount() {
@@ -95,6 +99,18 @@ class AppointmentModal extends React.Component {
     });
   }
 
+  showConfirmModal(size, actionCompleted) {
+    this.setState({ size, confirmModalOpen: true, actionCompleted: actionCompleted }, () => {
+      setTimeout(() => {
+        this.closeConfirmModal();
+      }, 2000);
+    });
+  }
+
+  closeConfirmModal() {
+    this.setState({ confirmModalOpen: false });
+  }
+
   handleSlotClick(clickedSlot) {
     if(clickedSlot.action === "doubleClick") {
       let tempProp = {...this.state.appointment};
@@ -122,6 +138,7 @@ class AppointmentModal extends React.Component {
     this.setState({appointments: [...this.state.appointments, newAppointment]}, () => {
       this.setState({appointment: new Appointment()});
       this.closeModal();
+      this.showConfirmModal("mini", "Scheduled");
     });
   }
 
@@ -140,6 +157,7 @@ class AppointmentModal extends React.Component {
     }, () => {
       this.setState({appointment: new Appointment()});
       this.closeModal();
+      this.showConfirmModal("mini", "Updated");
     });
   }
 
@@ -148,11 +166,13 @@ class AppointmentModal extends React.Component {
       return currentAppointment.id != deleteId;
     })}, () => {
       this.closeModal();
+      this.showConfirmModal("mini", "Canceled");
     });
   }
 
   render() {
-    const { open,size } = this.state;
+    const { open,size, confirmModalOpen } = this.state;
+    
     return (
       <div>
         <div>
@@ -173,6 +193,14 @@ class AppointmentModal extends React.Component {
               updateAppointment={this.updateAppointment}
               deleteAppointment={this.deleteAppointment}
             />
+          </Modal>
+        </div>
+        <div className="confirmation-modal">
+          <Modal size={size} open={confirmModalOpen} onClose={this.closeConfirmModal} closeOnDimmerClick={false}>
+              <Modal.Header align="center"> Appointment {this.state.actionCompleted}!</Modal.Header>
+              <Modal.Content align="center">
+                <Icon color="green" name="check" size="huge"  />
+              </Modal.Content>
           </Modal>
         </div>
       </div>
