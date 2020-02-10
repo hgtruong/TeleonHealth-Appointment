@@ -13,7 +13,8 @@ class AppointmentModal extends React.Component {
       confirmModalOpen: false,
       appointments: [],
       appointment: new Appointment(),
-      actionCompleted: ""
+      actionCompleted: "",
+      dateString: ""
     }
 
     this.showModal = this.showModal.bind(this);
@@ -99,11 +100,11 @@ class AppointmentModal extends React.Component {
     });
   }
 
-  showConfirmModal(size, actionCompleted) {
-    this.setState({ size, confirmModalOpen: true, actionCompleted: actionCompleted }, () => {
+  showConfirmModal(size, actionCompleted, dateString) {
+    this.setState({ size, confirmModalOpen: true, actionCompleted: actionCompleted, dateString: dateString }, () => {
       setTimeout(() => {
         this.closeConfirmModal();
-      }, 2000);
+      }, 4000);
     });
   }
 
@@ -135,10 +136,13 @@ class AppointmentModal extends React.Component {
     delete newAppointment['validDateSelected'];
     delete newAppointment['selectedDay'];
     newAppointment.id = this.idGenerator();
+    let createdAppointmentDate = newAppointment.start.toString().split(" ").slice(0,4).join("-");
+
     this.setState({appointments: [...this.state.appointments, newAppointment]}, () => {
-      this.setState({appointment: new Appointment()});
       this.closeModal();
-      this.showConfirmModal("mini", "Scheduled");
+      this.showConfirmModal("mini", "Scheduled", createdAppointmentDate);
+      this.setState({appointment: new Appointment()});
+
     });
   }
 
@@ -150,28 +154,34 @@ class AppointmentModal extends React.Component {
   }
 
   updateAppointment(updatedAppointment) {
+    let updatedAppointmentDate = updatedAppointment.start.toString().split(" ").slice(0,4).join("-");
 
     this.setState({appointments: this.state.appointments.map(
       currentAppointment => 
       (currentAppointment.id === updatedAppointment.id ? Object.assign({}, updatedAppointment): currentAppointment))
     }, () => {
-      this.setState({appointment: new Appointment()});
       this.closeModal();
-      this.showConfirmModal("mini", "Updated");
+      this.showConfirmModal("mini", "Updated", updatedAppointmentDate);
+      this.setState({appointment: new Appointment()});
     });
   }
 
   deleteAppointment(deleteId) {
+    let deletedAppointmentDate = "";
+
     this.setState({appointments: this.state.appointments.filter((currentAppointment) => {
+      if(currentAppointment.id === deleteId) {
+        deletedAppointmentDate = currentAppointment.start.toString().split(" ").slice(0,4).join("-");
+      }
       return currentAppointment.id != deleteId;
     })}, () => {
       this.closeModal();
-      this.showConfirmModal("mini", "Canceled");
+      this.showConfirmModal("mini", "Canceled", deletedAppointmentDate);
     });
   }
 
   render() {
-    const { open,size, confirmModalOpen } = this.state;
+    const { open,size, confirmModalOpen, actionCompleted, dateString } = this.state;
     
     return (
       <div>
@@ -197,9 +207,10 @@ class AppointmentModal extends React.Component {
         </div>
         <div className="confirmation-modal">
           <Modal size={size} open={confirmModalOpen} onClose={this.closeConfirmModal} closeOnDimmerClick={false}>
-              <Modal.Header align="center"> Appointment {this.state.actionCompleted}!</Modal.Header>
+              <Modal.Header align="center" style={{fontSize: "26px"}}> Appointment {actionCompleted}!</Modal.Header>
               <Modal.Content align="center">
-                <Icon color="green" name="check" size="huge"  />
+                <p style={{fontSize: "15px", fontWeight: "bold"}}> {actionCompleted} Date: {dateString} </p>
+                <Icon color="green" name="check" size="huge"/>
               </Modal.Content>
           </Modal>
         </div>
