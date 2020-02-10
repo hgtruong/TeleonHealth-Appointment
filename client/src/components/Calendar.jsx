@@ -38,7 +38,7 @@ const RBCalendar = function(props) {
       <div className="info-guide">
         <Message info>
           <p>* Double click on open date slot to schedule an appointment</p>
-          <p>* Double click on created appointment to view or delete </p>
+          <p>* Double click on existing appointment to view or cancel </p>
         </Message>
       </div>
     </div>
