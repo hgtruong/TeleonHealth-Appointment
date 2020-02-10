@@ -42,7 +42,7 @@ class AppointmentModal extends React.Component {
         reasonForVisit: "TEST",
         start: new Date('Febuary 7 2020'),
         end: new Date('Febuary 7 2020'),
-        title: `Dr. Howser (Psychologist)`,
+        title: `Dr. Howser (Surgeon)`,
         allDay: true,
         doctor: {  
           "firstName": "Doogie",
@@ -57,7 +57,7 @@ class AppointmentModal extends React.Component {
         lastName: "Knope",
         start: new Date('Febuary 20 2020'),
         end: new Date('Febuary 20 2020'),
-        title: `Dr. Howser (Diagnostic Medicine)`,
+        title: `Dr. House (Diagnostic Medicine)`,
         allDay: true,
         doctor: {  
           "firstName": "Gregory",
@@ -72,7 +72,7 @@ class AppointmentModal extends React.Component {
         lastName: "Scott",
         start: new Date('Febuary 3 2020'),
         end: new Date('Febuary 3 2020'),
-        title: `Dr. Howser (Psychiatrist)`,
+        title: `Dr. Crane (Psychiatrist)`,
         allDay: true,
         doctor: {
           "firstName": "Frasier",
@@ -96,16 +96,17 @@ class AppointmentModal extends React.Component {
   }
 
   handleSlotClick(clickedSlot) {
-    let tempProp = {...this.state.appointment};
-    tempProp.start = clickedSlot.start;
-
-    this.setState({appointment: tempProp}, () => {
-      this.showModal('large');
-    });
+    if(clickedSlot.action === "doubleClick") {
+      let tempProp = {...this.state.appointment};
+      tempProp.start = clickedSlot.start;
+  
+      this.setState({appointment: tempProp}, () => {
+        this.showModal('large');
+      });
+    }
   }
 
   handleAppointDoubleClick(appointmentClicked) {
-    console.log('appoint clicked', appointmentClicked.start);
     this.setState({appointment: appointmentClicked}, () => {
       this.showModal('large');
     });
@@ -145,7 +146,6 @@ class AppointmentModal extends React.Component {
     this.setState({appointments: this.state.appointments.filter((currentAppointment) => {
       return currentAppointment.id != deleteId;
     })}, () => {
-      console.log('new array with deleted', this.state.appointments);
       this.closeModal();
     });
   }

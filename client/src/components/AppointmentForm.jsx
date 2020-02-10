@@ -106,8 +106,7 @@ class AppointmentForm extends React.Component {
   }
 
 handleDelete(event) {
-  console.log('inside handleDelete')
-  // this.props.deleteAppointment(this.state.id);
+  this.props.deleteAppointment(this.state.id);
 }
 
 isEditing() {
@@ -206,14 +205,15 @@ checkInputFieldsFilled() {
                 > Cancel </Button>
             </Form.Field>
             <Form.Field>
-                <Button animated="fade"
-                    type="button"
-                    negative
-                    floated="right"
-                    disabled={!this.isEditing()}
+                <Button 
+                  animated="fade"
+                  type="button"
+                  negative
+                  floated="right"
+                  disabled={!this.isEditing()}
                 >
                   <Button.Content visible>  Delete Appointment </Button.Content>
-                  <Button.Content onClick={this.handleDelete} hidden> Click again to proceed </Button.Content>
+                  <Button.Content onClick={this.handleDelete} hidden> Click again to delete </Button.Content>
                 </Button>
             </Form.Field>
           </Form.Group>
