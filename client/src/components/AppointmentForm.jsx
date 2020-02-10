@@ -45,9 +45,9 @@ class AppointmentForm extends React.Component {
       end: this.props.appointment.end,
       title: this.props.appointment.title,
       doctor: this.props.appointment.doctor,
-      selectedDay: this.props.start,
+      selectedDay: this.props.appointment.start,
       cancel: false,
-      validDateSelected: false
+      validDateSelected: this.props.appointment.start ? true : false
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
