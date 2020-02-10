@@ -230,9 +230,10 @@ handleCancel() {
                     negative
                     floated="right"
                     disabled={!this.isEditing()}
+                    onClick={this.openCancelConfirmModal} 
                   >
                     <Button.Content visible>  Cancel Appointment </Button.Content>
-                    <Button.Content onClick={this.openCancelConfirmModal} hidden> Click to confirm cancel </Button.Content>
+                    <Button.Content hidden> Click to confirm cancel </Button.Content>
                   </Button>
               </Form.Field>
             </Form.Group>
