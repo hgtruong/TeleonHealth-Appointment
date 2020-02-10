@@ -48,7 +48,7 @@ class AppointmentForm extends React.Component {
       selectedDay: this.props.appointment.start,
       cancel: false,
       validDateSelected: this.props.appointment.start ? true : false,
-      deleteConfirmOpen: false
+      cancelConfirmOpen: false
     }
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -58,9 +58,9 @@ class AppointmentForm extends React.Component {
     this.handleCancel = this.handleCancel.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.isEditing = this.isEditing.bind(this);
-    this.showDeleteConfirmModal = this.showDeleteConfirmModal.bind(this);
-    this.closeDeleteConfirmModal = this.closeDeleteConfirmModal.bind(this);
-    this.openDeleteConfirmModal = this.openDeleteConfirmModal.bind(this);
+    this.showCancelConfirmModal = this.showCancelConfirmModal.bind(this);
+    this.closeCancelConfirmModal = this.closeCancelConfirmModal.bind(this);
+    this.openCancelConfirmModal = this.openCancelConfirmModal.bind(this);
   }
 
   handleDayClick(day, modifiers = {}) {
@@ -113,16 +113,16 @@ handleDelete(event) {
   this.props.deleteAppointment(this.state.id);
 }
 
-openDeleteConfirmModal() {
-  this.showDeleteConfirmModal("mini");
+openCancelConfirmModal() {
+  this.showCancelConfirmModal("mini");
 }
 
-showDeleteConfirmModal(size) {
-  this.setState({ size, deleteConfirmOpen: true});
+showCancelConfirmModal(size) {
+  this.setState({ size, cancelConfirmOpen: true});
 }
 
-closeDeleteConfirmModal() {
-  this.setState({ deleteConfirmOpen: false });
+closeCancelConfirmModal() {
+  this.setState({ cancelConfirmOpen: false });
 }
 
 isEditing() {
@@ -141,7 +141,7 @@ handleCancel() {
 }
 
   render() {
-    const {size, deleteConfirmOpen} = this.state;
+    const {size, cancelConfirmOpen} = this.state;
 
     return (  
       <div>
@@ -177,14 +177,14 @@ handleCancel() {
                 placeholder="Doctor"
               />
 
-              <DayPicker
-                modifiers={ {
-                  disabled: {daysOfWeek: [0,6]}
-                } }
-                onDayClick={this.handleDayClick}
-                selectedDays={this.state.selectedDay}
-                month={this.state.start}
-              />
+                <DayPicker
+                  modifiers={ {
+                    disabled: {daysOfWeek: [0,6]}
+                  } }
+                  onDayClick={this.handleDayClick}
+                  selectedDays={this.state.selectedDay}
+                  month={this.state.start}
+                />
             </Form.Group>
             <Form.Group widths='2'>
               <Form.Field
@@ -231,8 +231,8 @@ handleCancel() {
                     floated="right"
                     disabled={!this.isEditing()}
                   >
-                    <Button.Content visible>  Delete Appointment </Button.Content>
-                    <Button.Content onClick={this.openDeleteConfirmModal} hidden> Click to confirm delete </Button.Content>
+                    <Button.Content visible>  Cancel Appointment </Button.Content>
+                    <Button.Content onClick={this.openCancelConfirmModal} hidden> Click to confirm cancel </Button.Content>
                   </Button>
               </Form.Field>
             </Form.Group>
@@ -240,7 +240,7 @@ handleCancel() {
         </div>
         
         <div className="delete-confirm-modal">
-          <Modal size={size} open={deleteConfirmOpen} onClose={this.closeDeleteConfirmModal} closeOnDimmerClick={false}>
+          <Modal size={size} open={cancelConfirmOpen} onClose={this.closeCancelConfirmModal} closeOnDimmerClick={false}>
             <Modal.Header align="center">Canceling Appointment</Modal.Header>
             <Modal.Content align="center">
               <p>Are you sure you want to cancel this appointment?</p>
@@ -255,7 +255,7 @@ handleCancel() {
               <Button
                 type="button"
                 negative 
-                onClick={this.closeDeleteConfirmModal}
+                onClick={this.closeCancelConfirmModal}
               > No </Button>
 
             </Modal.Actions>
