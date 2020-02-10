@@ -2,7 +2,7 @@ import React from "react";
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-
+import { Message } from "semantic-ui-react";
 const localizer = momentLocalizer(moment);
 
 const style = {
@@ -22,17 +22,25 @@ const RBCalendar = function(props) {
   }
 
   return (
-    <div className="calendar-container" style={style}>
-      <Calendar
-        localizer={localizer}
-        events={props.parentAppointments}
-        defaultView="month"
-        views={["month"]}
-        selectable={true}
-        onDoubleClickEvent={props.doubleClickHandler}
-        onSelectSlot={props.handleSlotClick}
-        eventPropGetter={eventStyleGetter.bind(this)}
-        />
+    <div>
+      <div className="calendar-container" style={style}>
+        <Calendar
+          localizer={localizer}
+          events={props.parentAppointments}
+          defaultView="month"
+          views={["month"]}
+          selectable={true}
+          onDoubleClickEvent={props.doubleClickHandler}
+          onSelectSlot={props.handleSlotClick}
+          eventPropGetter={eventStyleGetter.bind(this)}
+          />
+      </div>
+      <div className="info-guide">
+        <Message info>
+          <p>* Double click on open date slot to schedule an appointment</p>
+          <p>* Double click on created appointment to view or delete </p>
+        </Message>
+      </div>
     </div>
   )
 }
