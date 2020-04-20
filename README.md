@@ -1,5 +1,7 @@
 # TeleonHealth-Appointment
 
+#### This application allows patients to create, update, and delete appointments.
+
 To build and run locally: 
 
 #### For MacOS: 
